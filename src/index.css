@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+
+  html {
+    overflow-x: hidden;
+  }
+
+  body {
+    background: linear-gradient(135deg, #0f0d10 0%, #1a1520 50%, #0f1118 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    min-height: 100dvh;
+    color: white;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    overscroll-behavior: none;
+  }
+
+  input[type='number'],
+  input[type='text'],
+  select {
+    font-size: 16px !important;
+  }
+}
+
+@layer components {
+  .glass-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1.25rem;
+  }
+
+  .glass-card-hover {
+    background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1.25rem;
+    transition: all 0.2s ease;
+  }
+
+  .glass-card-hover:hover {
+    background: linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.05) 100%);
+    border-color: rgba(45,212,191,0.2);
+  }
+
+  .accent-btn {
+    background: linear-gradient(135deg, #2dd4bf 0%, #38bdf8 100%);
+    color: #0f0d10;
+    font-weight: 600;
+    border-radius: 0.875rem;
+    transition: all 0.2s ease;
+    min-height: 48px;
+  }
+
+  .accent-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .accent-btn:disabled {
+    opacity: 0.4;
+    transform: none;
+    cursor: not-allowed;
+  }
+
+  .input-field {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 0.875rem;
+    color: white;
+    transition: all 0.2s ease;
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .input-field:focus {
+    outline: none;
+    border-color: rgba(45,212,191,0.4);
+    background: rgba(255,255,255,0.08);
+  }
+
+  .input-field::placeholder {
+    color: rgba(255,255,255,0.25);
+  }
+
+  .label-text {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+  }
+}
