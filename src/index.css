@@ -13,6 +13,9 @@
     overflow-x: hidden;
   }
 
+  html {
+    background-color: #0f0d10;
+  }
   body {
     background: linear-gradient(135deg, #0f0d10 0%, #1a1520 50%, #0f1118 100%);
     background-attachment: fixed;

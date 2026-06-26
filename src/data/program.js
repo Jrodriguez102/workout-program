@@ -1,3 +1,19 @@
+export const BODYWEIGHT_EXERCISES = new Set([
+  'Bodyweight Squat',
+  'Wall Sit',
+  'Step-Up',
+  'Glute Bridge',
+  'Incline Push-Up',
+  'Plank',
+  'Knee Plank',
+  'Bear Hold',
+  'Dead Bug',
+  'Bodyweight Kickback on Floor',
+  'Seated Knee Tuck',
+  'Heel Tap',
+  'Russian Twist',
+]);
+
 export const programDays = {
   A: {
     focus: 'Full Body — Squat & Push',
@@ -176,6 +192,43 @@ export const programDays = {
       },
     ],
     cardio: 'Treadmill or bike — moderate pace, 10 min',
+  },
+  C: {
+    focus: 'Cardio & Core',
+    cardioNote: 'Incline treadmill walk — 30-45 min, incline level 6-10, pace 3.0-3.5 mph',
+    exercises: [
+      {
+        name: 'Dead Bug',
+        pattern: 'Core — deep abs, stability',
+        sets: 3,
+        reps: '10',
+        bodyweight: true,
+        demo: 'https://www.youtube.com/shorts/XcYtWYMz39w',
+        alternatives: [],
+        alternativeDemos: {},
+      },
+      {
+        name: 'Heel Tap',
+        pattern: 'Core — obliques, lower abs',
+        sets: 3,
+        reps: '20',
+        bodyweight: true,
+        demo: 'https://www.youtube.com/shorts/W65C7JVgg50',
+        alternatives: [],
+        alternativeDemos: {},
+      },
+      {
+        name: 'Plank',
+        pattern: 'Core — full stabilization',
+        sets: 3,
+        reps: '20 sec',
+        isHold: true,
+        bodyweight: true,
+        demo: 'https://www.youtube.com/shorts/hoeNgjheDHk',
+        alternatives: [],
+        alternativeDemos: {},
+      },
+    ],
   },
 }
 

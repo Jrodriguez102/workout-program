@@ -3,15 +3,37 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
 import { supabase } from '../lib/supabase'
-import { exerciseNames } from '../data/program'
 
 export default function Progress() {
-  const [selectedExercise, setSelectedExercise] = useState(exerciseNames[0])
+  const [exerciseList, setExerciseList] = useState([])
+  const [selectedExercise, setSelectedExercise] = useState(null)
   const [chartData, setChartData] = useState([])
   const [stats, setStats] = useState({ totalWorkouts: 0, maxWeight: 0, improvement: null })
   const [loading, setLoading] = useState(true)
+  const [listLoading, setListLoading] = useState(true)
 
+  // Load the distinct weighted exercise names from actual logs
   useEffect(() => {
+    async function fetchExerciseList() {
+      const { data } = await supabase
+        .from('exercise_logs')
+        .select('exercise_name')
+        .not('weight_lbs', 'is', null)
+
+      if (data && data.length > 0) {
+        const unique = [...new Set(data.map((r) => r.exercise_name))].sort()
+        setExerciseList(unique)
+        setSelectedExercise(unique[0])
+      }
+      setListLoading(false)
+    }
+    fetchExerciseList()
+  }, [])
+
+  // Load chart data whenever selected exercise changes
+  useEffect(() => {
+    if (!selectedExercise) return
+
     async function fetchData() {
       setLoading(true)
 
@@ -19,6 +41,7 @@ export default function Progress() {
         .from('exercise_logs')
         .select('logged_at, weight_lbs')
         .eq('exercise_name', selectedExercise)
+        .not('weight_lbs', 'is', null)
         .order('logged_at', { ascending: true })
 
       const { count } = await supabase
@@ -60,25 +83,29 @@ export default function Progress() {
         <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>Strength over time</p>
       </div>
 
-      {/* Exercise Selector */}
       <div className="glass-card p-5 mb-4">
         <p className="label-text mb-2">Exercise</p>
-        <select
-          value={selectedExercise}
-          onChange={(e) => setSelectedExercise(e.target.value)}
-          className="input-field w-full px-4 py-3 text-sm"
-        >
-          {exerciseNames.map((ex) => (
-            <option key={ex} value={ex} style={{ background: '#1a1520' }}>{ex}</option>
-          ))}
-        </select>
+        {listLoading ? (
+          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.35)' }}>Loading exercises...</p>
+        ) : exerciseList.length === 0 ? (
+          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.35)' }}>No weighted exercises logged yet</p>
+        ) : (
+          <select
+            value={selectedExercise ?? ''}
+            onChange={(e) => setSelectedExercise(e.target.value)}
+            className="input-field w-full px-4 py-3 text-sm"
+          >
+            {exerciseList.map((ex) => (
+              <option key={ex} value={ex} style={{ background: '#1a1520' }}>{ex}</option>
+            ))}
+          </select>
+        )}
       </div>
 
-      {/* Chart */}
       <div className="glass-card p-5 mb-4">
         <p className="label-text mb-1">Weight Progression</p>
-        <p className="text-white font-light mb-4">{selectedExercise}</p>
-        {loading ? (
+        <p className="text-white font-light mb-4">{selectedExercise ?? '—'}</p>
+        {loading || listLoading ? (
           <div className="h-48 flex items-center justify-center">
             <p className="text-sm" style={{ color: 'rgba(255,255,255,0.35)' }}>Loading...</p>
           </div>
@@ -114,7 +141,6 @@ export default function Progress() {
         )}
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-3 gap-3">
         {[
           { label: 'Workouts', value: stats.totalWorkouts },

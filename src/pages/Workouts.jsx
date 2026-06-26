@@ -1,8 +1,28 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { programDays } from '../data/program'
 
+function hasActiveSession(day) {
+  try {
+    const raw = sessionStorage.getItem(`workout_session_day_${day}`)
+    if (!raw) return false
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed.exercises) && Array.isArray(parsed.sets)
+  } catch {}
+  return false
+}
+
 export default function Workouts() {
   const navigate = useNavigate()
+  const [activeSessions, setActiveSessions] = useState({})
+
+  useEffect(() => {
+    const active = {}
+    Object.keys(programDays).forEach((day) => {
+      active[day] = hasActiveSession(day)
+    })
+    setActiveSessions(active)
+  }, [])
 
   return (
     <div className="p-5 max-w-lg mx-auto">
@@ -40,14 +60,16 @@ export default function Workouts() {
           </div>
 
           <div className="mb-4 py-2.5" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-            <p className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>Cardio finisher: {program.cardio}</p>
+            <p className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+              {program.cardio ? `Cardio finisher: ${program.cardio}` : program.cardioNote}
+            </p>
           </div>
 
           <button
             onClick={() => navigate(`/session/${day}`)}
             className="accent-btn w-full py-3.5 text-sm"
           >
-            Start Day {day}
+            {activeSessions[day] ? `Resume Day ${day}` : `Start Day ${day}`}
           </button>
         </div>
       ))}

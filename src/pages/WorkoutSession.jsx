@@ -1,28 +1,60 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { programDays } from '../data/program'
+import { programDays, BODYWEIGHT_EXERCISES } from '../data/program'
+
+const SESSION_KEY = (day) => `workout_session_day_${day}`
+
+function loadSavedState(day) {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY(day))
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    if (
+      Array.isArray(parsed.exercises) &&
+      Array.isArray(parsed.sets) &&
+      typeof parsed.currentIndex === 'number'
+    ) return parsed
+  } catch {}
+  return null
+}
 
 export default function WorkoutSession() {
   const { day } = useParams()
   const navigate = useNavigate()
   const program = programDays[day]
 
-  const [exercises, setExercises] = useState(program.exercises)
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const saved = loadSavedState(day)
+
+  const [exercises, setExercises] = useState(saved?.exercises ?? program.exercises)
+  const [currentIndex, setCurrentIndex] = useState(saved?.currentIndex ?? 0)
   const [sets, setSets] = useState(
+    saved?.sets ??
     program.exercises.map((ex) =>
       Array.from({ length: ex.sets }, () => ({ weight: '', reps: '', seconds: '', done: false }))
     )
   )
   const [showSwap, setShowSwap] = useState(false)
-  const [cardioMinutes, setCardioMinutes] = useState('')
+  const [cardioMinutes, setCardioMinutes] = useState(saved?.cardioMinutes ?? '')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
+  const [cardioIntroDone, setCardioIntroDone] = useState(
+    saved?.cardioIntroDone ?? (day !== 'C')
+  )
 
   const currentExercise = exercises[currentIndex]
   const currentSets = sets[currentIndex]
   const isHold = currentExercise.isHold
+  const isFirstExercise = currentIndex === 0
+  const isLastExercise = currentIndex === exercises.length - 1
+  const allSetsDone = currentSets.every((s) => s.done)
+
+  useEffect(() => {
+    sessionStorage.setItem(
+      SESSION_KEY(day),
+      JSON.stringify({ exercises, sets, currentIndex, cardioMinutes, cardioIntroDone })
+    )
+  }, [exercises, sets, currentIndex, cardioMinutes, cardioIntroDone, day])
 
   const updateSet = (setIndex, field, value) => {
     setSets(sets.map((s, i) =>
@@ -49,15 +81,21 @@ export default function WorkoutSession() {
     setShowSwap(false)
   }
 
-  const allSetsDone = currentSets.every((s) => s.done)
-  const isLastExercise = currentIndex === exercises.length - 1
-
   const handleNext = () => {
     if (currentIndex < exercises.length - 1) {
       setCurrentIndex(currentIndex + 1)
       setShowSwap(false)
     }
   }
+
+  const handleBack = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1)
+      setShowSwap(false)
+    }
+  }
+
+  const clearSession = () => sessionStorage.removeItem(SESSION_KEY(day))
 
   const handleFinish = async () => {
     setSaving(true)
@@ -71,10 +109,11 @@ export default function WorkoutSession() {
       for (let i = 0; i < exercises.length; i++) {
         const exercise = exercises[i]
         const isHoldEx = exercise.isHold
+        const isBW = BODYWEIGHT_EXERCISES.has(exercise.name)
         const doneSets = sets[i].filter((s) => {
           if (!s.done) return false
           if (isHoldEx) return s.seconds !== ''
-          return s.weight !== '' && s.reps !== ''
+          return s.reps !== '' || s.weight !== ''
         })
         if (doneSets.length === 0) continue
 
@@ -83,28 +122,33 @@ export default function WorkoutSession() {
           exercise_name: exercise.name,
           set_number: j + 1,
           reps: isHoldEx ? null : parseInt(s.reps),
-          weight_lbs: isHoldEx ? null : parseFloat(s.weight),
+          weight_lbs: isHoldEx ? null : isBW ? null : parseFloat(s.weight),
           seconds: isHoldEx ? parseInt(s.seconds) : null,
         }))
 
         const { error: logError } = await supabase.from('exercise_logs').insert(rows)
         if (logError) throw logError
 
-        if (!isHoldEx) {
-          const maxWeight = Math.max(...doneSets.map((s) => parseFloat(s.weight)))
-          const { data: existing } = await supabase
-            .from('personal_records')
-            .select('weight_lbs')
-            .eq('exercise_name', exercise.name)
-            .single()
-          if (!existing || maxWeight > existing.weight_lbs) {
-            await supabase.from('personal_records').upsert(
-              { exercise_name: exercise.name, weight_lbs: maxWeight, achieved_at: new Date().toISOString() },
-              { onConflict: 'exercise_name' }
-            )
+        if (!isHoldEx && !isBW) {
+          const validWeights = doneSets.map((s) => parseFloat(s.weight)).filter((w) => !isNaN(w))
+          if (validWeights.length > 0) {
+            const maxWeight = Math.max(...validWeights)
+            const { data: existing } = await supabase
+              .from('personal_records')
+              .select('weight_lbs')
+              .eq('exercise_name', exercise.name)
+              .single()
+            if (!existing || maxWeight > existing.weight_lbs) {
+              await supabase.from('personal_records').upsert(
+                { exercise_name: exercise.name, weight_lbs: maxWeight, achieved_at: new Date().toISOString() },
+                { onConflict: 'exercise_name' }
+              )
+            }
           }
         }
       }
+
+      clearSession()
       navigate('/')
     } catch (err) {
       setError('Failed to save workout. Try again.')
@@ -112,6 +156,30 @@ export default function WorkoutSession() {
     } finally {
       setSaving(false)
     }
+  }
+
+  if (!cardioIntroDone) {
+    return (
+      <div className="p-5 max-w-lg mx-auto">
+        <div className="mb-8 pt-2">
+          <p className="label-text mb-1">Day C — Cardio & Core</p>
+          <h1 className="text-2xl font-light text-white mb-1">Start with your walk</h1>
+          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>Complete your cardio before the core circuit</p>
+        </div>
+        <div className="glass-card p-5 mb-6">
+          <p className="label-text mb-3">Today's Cardio</p>
+          <p className="text-white font-light mb-3">Incline Treadmill Walk</p>
+          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>{program.cardioNote}</p>
+        </div>
+        <button
+          onClick={() => setCardioIntroDone(true)}
+          className="w-full py-4 rounded-2xl text-sm font-medium transition-all"
+          style={{ background: 'linear-gradient(135deg, #2dd4bf, #38bdf8)', color: '#0f0d10' }}
+        >
+          Done — Start Core Circuit
+        </button>
+      </div>
+    )
   }
 
   return (
@@ -153,13 +221,15 @@ export default function WorkoutSession() {
                 Watch demo
               </a>
             )}
-            <button
-              onClick={() => setShowSwap(!showSwap)}
-              className="text-xs px-3 py-1.5 rounded-lg transition-colors"
-              style={{ color: '#2dd4bf', border: '1px solid rgba(45,212,191,0.3)' }}
-            >
-              Swap
-            </button>
+            {day !== 'C' && (
+              <button
+                onClick={() => setShowSwap(!showSwap)}
+                className="text-xs px-3 py-1.5 rounded-lg transition-colors"
+                style={{ color: '#2dd4bf', border: '1px solid rgba(45,212,191,0.3)' }}
+              >
+                Swap
+              </button>
+            )}
           </div>
         </div>
 
@@ -197,13 +267,19 @@ export default function WorkoutSession() {
               />
             ) : (
               <>
-                <input
-                  type="number"
-                  placeholder="lbs"
-                  value={set.weight}
-                  onChange={(e) => updateSet(index, 'weight', e.target.value)}
-                  className="input-field min-w-0 flex-1 px-3 py-2.5 text-sm"
-                />
+                {BODYWEIGHT_EXERCISES.has(currentExercise.name) ? (
+                  <div className="input-field min-w-0 flex-1 px-3 py-2.5 text-sm flex items-center" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                    Bodyweight
+                  </div>
+                ) : (
+                  <input
+                    type="number"
+                    placeholder="lbs"
+                    value={set.weight}
+                    onChange={(e) => updateSet(index, 'weight', e.target.value)}
+                    className="input-field min-w-0 flex-1 px-3 py-2.5 text-sm"
+                  />
+                )}
                 <input
                   type="number"
                   placeholder="reps"
@@ -229,8 +305,8 @@ export default function WorkoutSession() {
 
       {isLastExercise && (
         <div className="glass-card p-5 mb-4">
-          <p className="label-text mb-1">Cardio Finisher</p>
-          <p className="text-sm font-light mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>{program.cardio}</p>
+          <p className="label-text mb-1">{day === 'C' ? 'Cardio' : 'Cardio Finisher'}</p>
+          <p className="text-sm font-light mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>{day === 'C' ? program.cardioNote : program.cardio}</p>
           <input
             type="number"
             placeholder="Minutes completed"
@@ -243,31 +319,47 @@ export default function WorkoutSession() {
 
       {error && <p className="text-red-400 text-sm mb-3 text-center">{error}</p>}
 
-      {isLastExercise ? (
+      <div className="flex gap-3">
         <button
-          onClick={handleFinish}
-          disabled={saving}
-          className="w-full py-4 rounded-2xl text-sm font-medium transition-all"
-          style={saving
-            ? { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.3)' }
-            : { background: 'linear-gradient(135deg, #2dd4bf, #38bdf8)', color: '#0f0d10' }
-          }
+          onClick={handleBack}
+          disabled={isFirstExercise}
+          className="py-4 rounded-2xl text-sm font-medium transition-all flex-shrink-0"
+          style={{
+            width: '72px',
+            ...(isFirstExercise
+              ? { background: 'rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.05)' }
+              : { background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.1)' })
+          }}
         >
-          {saving ? 'Saving...' : 'Finish Workout'}
+          ← Back
         </button>
-      ) : (
-        <button
-          onClick={handleNext}
-          disabled={!allSetsDone}
-          className="w-full py-4 rounded-2xl text-sm font-medium transition-all"
-          style={allSetsDone
-            ? { background: 'linear-gradient(135deg, #2dd4bf, #38bdf8)', color: '#0f0d10' }
-            : { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.2)' }
-          }
-        >
-          Next Exercise
-        </button>
-      )}
+
+        {isLastExercise ? (
+          <button
+            onClick={handleFinish}
+            disabled={saving}
+            className="flex-1 py-4 rounded-2xl text-sm font-medium transition-all"
+            style={saving
+              ? { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.3)' }
+              : { background: 'linear-gradient(135deg, #2dd4bf, #38bdf8)', color: '#0f0d10' }
+            }
+          >
+            {saving ? 'Saving...' : 'Finish Workout'}
+          </button>
+        ) : (
+          <button
+            onClick={handleNext}
+            disabled={!allSetsDone}
+            className="flex-1 py-4 rounded-2xl text-sm font-medium transition-all"
+            style={allSetsDone
+              ? { background: 'linear-gradient(135deg, #2dd4bf, #38bdf8)', color: '#0f0d10' }
+              : { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.2)' }
+            }
+          >
+            Next Exercise
+          </button>
+        )}
+      </div>
     </div>
   )
 }
