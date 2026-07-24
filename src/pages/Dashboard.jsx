@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { programDays } from '../data/program'
 
 function getGreeting() {
   const hour = new Date().getHours()
@@ -9,10 +10,13 @@ function getGreeting() {
   return 'Good evening, Jasmine'
 }
 
+const NEXT_DAY = { A: 'B', B: 'C', C: 'A' }
+
 function getTodayWorkout(sessions) {
-  if (sessions.length === 0) return 'A'
-  const last = sessions[0].workout_day
-  return last === 'A' ? 'B' : 'A'
+  const resistanceSessions = sessions.filter((s) => s.workout_day !== 'Stairmaster')
+  if (resistanceSessions.length === 0) return 'A'
+  const last = resistanceSessions[0].workout_day
+  return NEXT_DAY[last] ?? 'A'
 }
 
 function hasActiveSession(day) {
@@ -23,6 +27,12 @@ function hasActiveSession(day) {
     return Array.isArray(parsed.exercises) && Array.isArray(parsed.sets)
   } catch {}
   return false
+}
+
+const DAY_LABELS = {
+  A: 'Day A — Squat & Push',
+  B: 'Day B — Hinge & Pull',
+  C: 'Day C — Lunge & Arms',
 }
 
 export default function Dashboard() {
@@ -47,10 +57,10 @@ export default function Dashboard() {
       const now = new Date()
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
       const monthlyCount = (sessions || []).filter(
-        (s) => new Date(s.completed_at) >= startOfMonth && s.workout_day !== 'C'
+        (s) => new Date(s.completed_at) >= startOfMonth && s.workout_day !== 'Stairmaster'
       ).length
       const cardioCount = (sessions || []).filter(
-        (s) => new Date(s.completed_at) >= startOfMonth && s.workout_day === 'C'
+        (s) => new Date(s.completed_at) >= startOfMonth && s.workout_day === 'Stairmaster'
       ).length
 
       const { data: prs } = await supabase
@@ -70,14 +80,14 @@ export default function Dashboard() {
       })
 
       setResumeDay(hasActiveSession(todayDay) ? todayDay : null)
-      setResumeCardio(hasActiveSession('C'))
+      setResumeCardio(hasActiveSession('Stairmaster'))
     }
 
     fetchStats()
   }, [])
 
-  const workoutLabel =
-    stats.todayDay === 'A' ? 'Day A — Squat & Push' : 'Day B — Hinge & Pull'
+  const workoutLabel = DAY_LABELS[stats.todayDay] ?? DAY_LABELS.A
+  const exerciseCount = programDays[stats.todayDay]?.exercises.length ?? 6
 
   function getMonthlyTarget() {
     const now = new Date()
@@ -104,7 +114,7 @@ export default function Dashboard() {
           style={{ background: 'radial-gradient(circle, #2dd4bf, transparent)', transform: 'translate(30%, -30%)' }} />
         <p className="label-text mb-2">Today's Workout</p>
         <h2 className="text-xl font-light text-white mb-1">{workoutLabel}</h2>
-        <p className="text-sm mb-5" style={{ color: 'rgba(255,255,255,0.4)' }}>6 exercises · 3 sets each</p>
+        <p className="text-sm mb-5" style={{ color: 'rgba(255,255,255,0.4)' }}>{exerciseCount} exercises · 3 sets each</p>
         <button
           onClick={() => navigate(`/session/${stats.todayDay}`)}
           className="accent-btn w-full py-3.5 text-sm"
@@ -113,17 +123,17 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* Optional Cardio Day */}
+      {/* Optional Stairmaster Day */}
       <div className="glass-card p-5 mb-4">
         <p className="label-text mb-2">Optional</p>
-        <h2 className="text-xl font-light text-white mb-1">Cardio & Core</h2>
-        <p className="text-sm mb-5" style={{ color: 'rgba(255,255,255,0.4)' }}>Incline walk · 30-45 min + core circuit</p>
+        <h2 className="text-xl font-light text-white mb-1">Stairmaster & Core</h2>
+        <p className="text-sm mb-5" style={{ color: 'rgba(255,255,255,0.4)' }}>Stairmaster intervals · 25 min + core circuit</p>
         <button
-          onClick={() => navigate('/session/C')}
+          onClick={() => navigate('/session/Stairmaster')}
           className="w-full py-3.5 text-sm rounded-2xl font-medium transition-all"
           style={{ border: '1px solid rgba(45,212,191,0.3)', color: '#2dd4bf', background: 'rgba(45,212,191,0.05)' }}
         >
-          {resumeCardio ? 'Resume Cardio Day' : 'Start Cardio Day'}
+          {resumeCardio ? 'Resume Stairmaster Day' : 'Start Stairmaster Day'}
         </button>
       </div>
 

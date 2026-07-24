@@ -39,7 +39,7 @@ export default function WorkoutSession() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const [cardioIntroDone, setCardioIntroDone] = useState(
-    saved?.cardioIntroDone ?? (day !== 'C')
+    saved?.cardioIntroDone ?? (day !== 'Stairmaster')
   )
 
   const currentExercise = exercises[currentIndex]
@@ -162,13 +162,13 @@ export default function WorkoutSession() {
     return (
       <div className="p-5 max-w-lg mx-auto">
         <div className="mb-8 pt-2">
-          <p className="label-text mb-1">Day C — Cardio & Core</p>
-          <h1 className="text-2xl font-light text-white mb-1">Start with your walk</h1>
+          <p className="label-text mb-1">Day {day} — {program.focus}</p>
+          <h1 className="text-2xl font-light text-white mb-1">Start with your {program.cardioLabel ?? 'cardio'}</h1>
           <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>Complete your cardio before the core circuit</p>
         </div>
         <div className="glass-card p-5 mb-6">
           <p className="label-text mb-3">Today's Cardio</p>
-          <p className="text-white font-light mb-3">Incline Treadmill Walk</p>
+          <p className="text-white font-light mb-3">{program.cardioLabel}</p>
           <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>{program.cardioNote}</p>
         </div>
         <button
@@ -221,7 +221,7 @@ export default function WorkoutSession() {
                 Watch demo
               </a>
             )}
-            {day !== 'C' && (
+            {day !== 'Stairmaster' && (
               <button
                 onClick={() => setShowSwap(!showSwap)}
                 className="text-xs px-3 py-1.5 rounded-lg transition-colors"
@@ -305,8 +305,8 @@ export default function WorkoutSession() {
 
       {isLastExercise && (
         <div className="glass-card p-5 mb-4">
-          <p className="label-text mb-1">{day === 'C' ? 'Cardio' : 'Cardio Finisher'}</p>
-          <p className="text-sm font-light mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>{day === 'C' ? program.cardioNote : program.cardio}</p>
+          <p className="label-text mb-1">{day === 'Stairmaster' ? 'Cardio' : 'Cardio Finisher'}</p>
+          <p className="text-sm font-light mb-3" style={{ color: 'rgba(255,255,255,0.4)' }}>{day === 'Stairmaster' ? program.cardioNote : program.cardio}</p>
           <input
             type="number"
             placeholder="Minutes completed"

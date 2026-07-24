@@ -12,6 +12,9 @@ export const BODYWEIGHT_EXERCISES = new Set([
   'Seated Knee Tuck',
   'Heel Tap',
   'Russian Twist',
+  'Bodyweight Reverse Lunge',
+  'Single-Leg RDL',
+  'Good Morning',
 ]);
 
 export const programDays = {
@@ -194,15 +197,87 @@ export const programDays = {
     cardio: 'Treadmill or bike — moderate pace, 10 min',
   },
   C: {
-    focus: 'Cardio & Core',
-    cardioNote: 'Incline treadmill walk — 30-45 min, incline level 6-10, pace 3.0-3.5 mph',
+    focus: 'Full Body — Lunge & Arms',
+    warmup: [
+      '5 min treadmill brisk walk or stationary bike',
+      '10 hip circles each direction',
+      '10 arm swings',
+      '10 bodyweight reverse lunges',
+    ],
+    exercises: [
+      {
+        name: 'Reverse Lunge (DB)',
+        pattern: 'Squat — unilateral, quads/glutes',
+        sets: 3,
+        reps: '10 each side',
+        demo: 'https://www.youtube.com/shorts/i3TNJmnInI0',
+        alternatives: ['Bodyweight Reverse Lunge'],
+        alternativeDemos: {
+          'Bodyweight Reverse Lunge': 'https://www.youtube.com/shorts/mkisKe3bP1M',
+        },
+      },
+      {
+        name: 'Romanian Deadlift (DB)',
+        pattern: 'Hinge — hamstrings, glutes',
+        sets: 3,
+        reps: '10',
+        demo: 'https://www.youtube.com/shorts/wiekN4aIJ0g',
+        alternatives: ['Glute Bridge', 'Single-Leg RDL', 'Good Morning'],
+        alternativeDemos: {
+          'Glute Bridge': 'https://www.youtube.com/shorts/X_IGw8U_e38',
+          'Single-Leg RDL': 'https://www.youtube.com/shorts/__J6fgCFC0M',
+          'Good Morning': 'https://www.youtube.com/shorts/m-JrD_fz0h8',
+        },
+      },
+      {
+        name: 'DB Bicep Curl',
+        pattern: 'Pull — biceps',
+        sets: 3,
+        reps: '10',
+        demo: 'https://www.youtube.com/shorts/0OA-DqdTyZA',
+        alternatives: ['Resistance Band Curl'],
+        alternativeDemos: {
+          'Resistance Band Curl': 'https://www.youtube.com/shorts/20xtfGZ37nw',
+        },
+      },
+      {
+        name: 'Tricep Pushdown (cable)',
+        pattern: 'Push — triceps',
+        sets: 3,
+        reps: '10',
+        demo: 'https://www.youtube.com/shorts/DofcfjlgOTs',
+        alternatives: ['Overhead DB Extension'],
+        alternativeDemos: {
+          'Overhead DB Extension': 'https://www.youtube.com/shorts/J565P8FzJXA',
+        },
+      },
+      {
+        name: 'Face Pull (cable/band)',
+        pattern: 'Pull — rear delts, upper back',
+        sets: 3,
+        reps: '10',
+        demo: 'https://www.youtube.com/shorts/xKpXv80Yz14',
+        alternatives: ['Resistance Band Pull-Apart', 'Reverse Fly (light DB)', 'Band Pull-Apart Overhead'],
+        alternativeDemos: {
+          'Resistance Band Pull-Apart': 'https://www.youtube.com/shorts/MxQlSph7Zug',
+          'Reverse Fly (light DB)': 'https://www.youtube.com/shorts/LsT-bR_zxLo',
+          'Band Pull-Apart Overhead': 'https://www.youtube.com/shorts/-H5kpgh3SlY',
+        },
+      },
+    ],
+    cardio: 'Treadmill or bike — moderate pace, 10 min',
+  },
+  Stairmaster: {
+    focus: 'Stairmaster & Core',
+    cardioLabel: 'Stairmaster',
+    cardioNote:
+      'Warm up 5 min @ level 4-5, main effort 10 min @ level 6-7, peak 5 min @ level 7-8, cool down 5 min @ level 4-5 (25 min total)',
     exercises: [
       {
         name: 'Dead Bug',
         pattern: 'Core — deep abs, stability',
         sets: 3,
         reps: '10',
-        bodyweight: true,
         demo: 'https://www.youtube.com/shorts/XcYtWYMz39w',
         alternatives: [],
         alternativeDemos: {},
@@ -212,7 +287,6 @@ export const programDays = {
         pattern: 'Core — obliques, lower abs',
         sets: 3,
         reps: '20',
-        bodyweight: true,
         demo: 'https://www.youtube.com/shorts/W65C7JVgg50',
         alternatives: [],
         alternativeDemos: {},
@@ -223,7 +297,6 @@ export const programDays = {
         sets: 3,
         reps: '20 sec',
         isHold: true,
-        bodyweight: true,
         demo: 'https://www.youtube.com/shorts/hoeNgjheDHk',
         alternatives: [],
         alternativeDemos: {},
@@ -235,4 +308,5 @@ export const programDays = {
 export const exerciseNames = [
   ...programDays.A.exercises.map((e) => e.name),
   ...programDays.B.exercises.map((e) => e.name),
+  ...programDays.C.exercises.map((e) => e.name),
 ]
