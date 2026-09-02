@@ -111,7 +111,7 @@ export default function Dashboard() {
       {/* Today's Workout */}
       <div className="glass-card p-5 mb-4 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10"
-          style={{ background: 'radial-gradient(circle, #2dd4bf, transparent)', transform: 'translate(30%, -30%)' }} />
+          style={{ background: 'radial-gradient(circle, #be185d, transparent)', transform: 'translate(30%, -30%)' }} />
         <p className="label-text mb-2">Today's Workout</p>
         <h2 className="text-xl font-light text-white mb-1">{workoutLabel}</h2>
         <p className="text-sm mb-5" style={{ color: 'rgba(255,255,255,0.4)' }}>{exerciseCount} exercises · 3 sets each</p>
@@ -131,7 +131,7 @@ export default function Dashboard() {
         <button
           onClick={() => navigate('/session/Stairmaster')}
           className="w-full py-3.5 text-sm rounded-2xl font-medium transition-all"
-          style={{ border: '1px solid rgba(45,212,191,0.3)', color: '#2dd4bf', background: 'rgba(45,212,191,0.05)' }}
+          style={{ border: '1px solid rgba(190,24,93,0.3)', color: '#be185d', background: 'rgba(190,24,93,0.05)' }}
         >
           {resumeCardio ? 'Resume Stairmaster Day' : 'Start Stairmaster Day'}
         </button>
@@ -141,19 +141,19 @@ export default function Dashboard() {
       <div className="grid grid-cols-3 gap-3 mb-4">
         <div className="glass-card p-4">
           <p className="label-text mb-2">{monthName}</p>
-          <p className="text-3xl font-light" style={{ color: '#2dd4bf' }}>
+          <p className="text-3xl font-light" style={{ color: '#be185d' }}>
             {stats.loading ? '—' : stats.monthlyCount}
           </p>
           <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>workouts</p>
         </div>
         <div className="glass-card p-4">
           <p className="label-text mb-2">Target</p>
-          <p className="text-3xl font-light" style={{ color: '#2dd4bf' }}>{monthlyTarget}</p>
+          <p className="text-3xl font-light" style={{ color: '#be185d' }}>{monthlyTarget}</p>
           <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>this month</p>
         </div>
         <div className="glass-card p-4">
           <p className="label-text mb-2">Cardio</p>
-          <p className="text-3xl font-light" style={{ color: '#2dd4bf' }}>
+          <p className="text-3xl font-light" style={{ color: '#be185d' }}>
             {stats.loading ? '—' : stats.cardioCount}
           </p>
           <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>this month</p>
@@ -168,7 +168,7 @@ export default function Dashboard() {
         ) : stats.latestPR ? (
           <div className="flex items-center justify-between">
             <p className="text-white font-light">{stats.latestPR.exercise_name}</p>
-            <p className="text-sm font-medium" style={{ color: '#2dd4bf' }}>{stats.latestPR.weight_lbs} lbs</p>
+            <p className="text-sm font-medium" style={{ color: '#be185d' }}>{stats.latestPR.weight_lbs} lbs</p>
           </div>
         ) : (
           <p className="text-sm" style={{ color: 'rgba(255,255,255,0.35)' }}>No PRs yet — start logging</p>

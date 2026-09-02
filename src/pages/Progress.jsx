@@ -131,10 +131,10 @@ export default function Progress() {
               <Line
                 type="monotone"
                 dataKey="weight"
-                stroke="#2dd4bf"
+                stroke="#be185d"
                 strokeWidth={2}
-                dot={{ fill: '#2dd4bf', r: 3 }}
-                activeDot={{ r: 5, fill: '#38bdf8' }}
+                dot={{ fill: '#be185d', r: 3 }}
+                activeDot={{ r: 5, fill: '#7e22ce' }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -148,7 +148,7 @@ export default function Progress() {
           { label: 'Strength', value: stats.improvement !== null ? `+${stats.improvement}%` : '—' },
         ].map(({ label, value }) => (
           <div key={label} className="glass-card p-4 text-center">
-            <p className="text-xl font-light" style={{ color: '#2dd4bf' }}>{value}</p>
+            <p className="text-xl font-light" style={{ color: '#be185d' }}>{value}</p>
             <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>{label}</p>
           </div>
         ))}

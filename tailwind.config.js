@@ -5,9 +5,9 @@ export default {
     extend: {
       colors: {
         accent: {
-          DEFAULT: '#2dd4bf',
-          light: '#5eead4',
-          dark: '#14b8a6',
+          DEFAULT: '#be185d',
+          light: '#ec4899',
+          dark: '#9d174d',
         },
         surface: {
           DEFAULT: 'rgba(255,255,255,0.05)',
@@ -21,7 +21,7 @@ export default {
       backgroundImage: {
         'app': 'linear-gradient(135deg, #0f0d10 0%, #1a1520 50%, #0f1118 100%)',
         'card': 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
-        'accent-gradient': 'linear-gradient(135deg, #2dd4bf 0%, #38bdf8 100%)',
+        'accent-gradient': 'linear-gradient(135deg, #be185d 0%, #7e22ce 100%)',
       },
     },
   },

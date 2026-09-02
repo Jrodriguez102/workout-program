@@ -34,14 +34,14 @@ export default function Workouts() {
       {Object.entries(programDays).map(([day, program]) => (
         <div key={day} className="glass-card p-5 mb-4 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-24 h-24 rounded-full opacity-10"
-            style={{ background: 'radial-gradient(circle, #2dd4bf, transparent)', transform: 'translate(30%, -30%)' }} />
+            style={{ background: 'radial-gradient(circle, #be185d, transparent)', transform: 'translate(30%, -30%)' }} />
 
           <div className="flex items-center justify-between mb-4">
             <div>
-              <span className="text-xs font-medium tracking-widest uppercase" style={{ color: '#2dd4bf' }}>Day {day}</span>
+              <span className="text-xs font-medium tracking-widest uppercase" style={{ color: '#be185d' }}>Day {day}</span>
               <p className="text-lg font-light text-white mt-0.5">{program.focus}</p>
             </div>
-            <span className="text-xs px-3 py-1 rounded-full" style={{ background: 'rgba(45,212,191,0.1)', color: '#2dd4bf' }}>
+            <span className="text-xs px-3 py-1 rounded-full" style={{ background: 'rgba(190,24,93,0.1)', color: '#be185d' }}>
               {program.exercises.length} exercises
             </span>
           </div>

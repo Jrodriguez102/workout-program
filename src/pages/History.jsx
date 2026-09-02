@@ -69,7 +69,7 @@ export default function History() {
                   <p className="text-white font-light">Day {session.workout_day}</p>
                   <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.35)' }}>{date} · {time}</p>
                 </div>
-                <span className="text-xs px-3 py-1 rounded-full" style={{ background: 'rgba(45,212,191,0.1)', color: '#2dd4bf' }}>
+                <span className="text-xs px-3 py-1 rounded-full" style={{ background: 'rgba(190,24,93,0.1)', color: '#be185d' }}>
                   {session.exercises.length} exercises
                 </span>
               </div>

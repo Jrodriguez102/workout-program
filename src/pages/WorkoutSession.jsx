@@ -174,7 +174,7 @@ export default function WorkoutSession() {
         <button
           onClick={() => setCardioIntroDone(true)}
           className="w-full py-4 rounded-2xl text-sm font-medium transition-all"
-          style={{ background: 'linear-gradient(135deg, #2dd4bf, #38bdf8)', color: '#0f0d10' }}
+          style={{ background: 'linear-gradient(135deg, #be185d, #7e22ce)', color: '#0f0d10' }}
         >
           Done — Start Core Circuit
         </button>
@@ -198,7 +198,7 @@ export default function WorkoutSession() {
           className="h-1 rounded-full transition-all"
           style={{
             width: `${((currentIndex + 1) / exercises.length) * 100}%`,
-            background: 'linear-gradient(90deg, #2dd4bf, #38bdf8)',
+            background: 'linear-gradient(90deg, #be185d, #7e22ce)',
           }}
         />
       </div>
@@ -225,7 +225,7 @@ export default function WorkoutSession() {
               <button
                 onClick={() => setShowSwap(!showSwap)}
                 className="text-xs px-3 py-1.5 rounded-lg transition-colors"
-                style={{ color: '#2dd4bf', border: '1px solid rgba(45,212,191,0.3)' }}
+                style={{ color: '#be185d', border: '1px solid rgba(190,24,93,0.3)' }}
               >
                 Swap
               </button>
@@ -293,7 +293,7 @@ export default function WorkoutSession() {
               onClick={() => toggleDone(index)}
               className="w-9 h-9 flex-shrink-0 rounded-xl flex items-center justify-center text-sm font-medium transition-all"
               style={set.done
-                ? { background: 'linear-gradient(135deg, #2dd4bf, #38bdf8)', color: '#0f0d10' }
+                ? { background: 'linear-gradient(135deg, #be185d, #7e22ce)', color: '#0f0d10' }
                 : { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.25)', border: '1px solid rgba(255,255,255,0.08)' }
               }
             >
@@ -341,7 +341,7 @@ export default function WorkoutSession() {
             className="flex-1 py-4 rounded-2xl text-sm font-medium transition-all"
             style={saving
               ? { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.3)' }
-              : { background: 'linear-gradient(135deg, #2dd4bf, #38bdf8)', color: '#0f0d10' }
+              : { background: 'linear-gradient(135deg, #be185d, #7e22ce)', color: '#0f0d10' }
             }
           >
             {saving ? 'Saving...' : 'Finish Workout'}
@@ -352,7 +352,7 @@ export default function WorkoutSession() {
             disabled={!allSetsDone}
             className="flex-1 py-4 rounded-2xl text-sm font-medium transition-all"
             style={allSetsDone
-              ? { background: 'linear-gradient(135deg, #2dd4bf, #38bdf8)', color: '#0f0d10' }
+              ? { background: 'linear-gradient(135deg, #be185d, #7e22ce)', color: '#0f0d10' }
               : { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.2)' }
             }
           >

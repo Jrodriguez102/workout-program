@@ -34,7 +34,7 @@ export default function BottomNav() {
             }`
           }
           style={({ isActive }) => ({
-            color: isActive ? '#2dd4bf' : 'rgba(255,255,255,0.35)',
+            color: isActive ? '#be185d' : 'rgba(255,255,255,0.35)',
           })}
         >
           <Icon size={20} />

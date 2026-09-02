@@ -55,11 +55,11 @@
 
   .glass-card-hover:hover {
     background: linear-gradient(135deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.05) 100%);
-    border-color: rgba(45,212,191,0.2);
+    border-color: rgba(190,24,93,0.2);
   }
 
   .accent-btn {
-    background: linear-gradient(135deg, #2dd4bf 0%, #38bdf8 100%);
+    background: linear-gradient(135deg, #be185d 0%, #7e22ce 100%);
     color: #0f0d10;
     font-weight: 600;
     border-radius: 0.875rem;
@@ -90,7 +90,7 @@
 
   .input-field:focus {
     outline: none;
-    border-color: rgba(45,212,191,0.4);
+    border-color: rgba(190,24,93,0.4);
     background: rgba(255,255,255,0.08);
   }
 
